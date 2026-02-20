@@ -1,0 +1,1 @@
+window.sessionStorage.removeItem('cartItems')

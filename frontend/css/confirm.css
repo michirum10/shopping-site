@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.item-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.item-grid button{
+    padding: 0;
+    font-family: inherit;
+    appearance: none;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+
+.item-card {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    width: 220px;
+    text-align: left;
+}
+.item-card img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 10px;
+}
+.item-card h2 {
+    font-size: 18px;
+    margin: 0;
+}
+.item-card p {
+    font-size: 16px;
+}

@@ -1,0 +1,7 @@
+# shopping-site/.gitignore
+__pycache__/
+*.pyc
+venv/
+shop.db        ← DBファイルはGitに含めない
+.env
+.DS_Store
