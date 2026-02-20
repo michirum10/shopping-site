@@ -1,30 +1,23 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
-import os
 
 app = Flask(__name__)
-CORS(app)  # フロントエンド(Vercel)からのリクエストを許可
+CORS(app)
 
 DATABASE = 'shop.db'
 
-# -----------------------------------------------
-# DB接続ヘルパー
-# -----------------------------------------------
+
 def get_db():
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # 辞書形式で取得できるようにする
+    conn.row_factory = sqlite3.Row
     return conn
 
 
-# -----------------------------------------------
-# DB初期化（テーブル作成 + サンプルデータ投入）
-# -----------------------------------------------
 def init_db():
     conn = get_db()
     cur = conn.cursor()
 
-    # 商品テーブル
     cur.execute('''
         CREATE TABLE IF NOT EXISTS products (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +28,6 @@ def init_db():
         )
     ''')
 
-    # 注文テーブル
     cur.execute('''
         CREATE TABLE IF NOT EXISTS orders (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,7 +36,7 @@ def init_db():
         )
     ''')
 
-    # 注文明細テーブル
+    # 数量(quantity)カラムを追加
     cur.execute('''
         CREATE TABLE IF NOT EXISTS order_items (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,11 +44,11 @@ def init_db():
             product_id INTEGER NOT NULL,
             name       TEXT    NOT NULL,
             price      INTEGER NOT NULL,
+            quantity   INTEGER NOT NULL DEFAULT 1,
             FOREIGN KEY (order_id) REFERENCES orders(id)
         )
     ''')
 
-    # サンプル商品データ（初回のみ）
     cur.execute('SELECT COUNT(*) FROM products')
     if cur.fetchone()[0] == 0:
         sample_products = [
@@ -78,8 +70,6 @@ def init_db():
 # -----------------------------------------------
 # 商品API
 # -----------------------------------------------
-
-# 商品一覧取得
 @app.route('/api/products', methods=['GET'])
 def get_products():
     conn = get_db()
@@ -88,7 +78,6 @@ def get_products():
     return jsonify([dict(p) for p in products])
 
 
-# 商品詳細取得
 @app.route('/api/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     conn = get_db()
@@ -96,44 +85,35 @@ def get_product(product_id):
         'SELECT * FROM products WHERE id = ?', (product_id,)
     ).fetchone()
     conn.close()
-
     if product is None:
         return jsonify({'error': '商品が見つかりません'}), 404
-
     return jsonify(dict(product))
 
 
 # -----------------------------------------------
 # 注文API
 # -----------------------------------------------
-
-# 注文登録
 @app.route('/api/orders', methods=['POST'])
 def create_order():
     data = request.get_json()
 
-    # バリデーション
     if not data or 'items' not in data or len(data['items']) == 0:
         return jsonify({'error': 'カートが空です'}), 400
 
     items = data['items']
-    total_price = sum(item['price'] for item in items)
+    # 数量を考慮した合計金額
+    total_price = sum(item['price'] * item.get('quantity', 1) for item in items)
 
     conn = get_db()
     cur = conn.cursor()
 
-    # 注文レコード作成
-    cur.execute(
-        'INSERT INTO orders (total_price) VALUES (?)',
-        (total_price,)
-    )
+    cur.execute('INSERT INTO orders (total_price) VALUES (?)', (total_price,))
     order_id = cur.lastrowid
 
-    # 注文明細レコード作成
     for item in items:
         cur.execute(
-            'INSERT INTO order_items (order_id, product_id, name, price) VALUES (?, ?, ?, ?)',
-            (order_id, item.get('id', 0), item['name'], item['price'])
+            'INSERT INTO order_items (order_id, product_id, name, price, quantity) VALUES (?, ?, ?, ?, ?)',
+            (order_id, item.get('id', 0), item['name'], item['price'], item.get('quantity', 1))
         )
 
     conn.commit()
@@ -146,7 +126,6 @@ def create_order():
     }), 201
 
 
-# 注文履歴取得
 @app.route('/api/orders', methods=['GET'])
 def get_orders():
     conn = get_db()
@@ -168,9 +147,6 @@ def get_orders():
     return jsonify(result)
 
 
-# -----------------------------------------------
-# 起動
-# -----------------------------------------------
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)

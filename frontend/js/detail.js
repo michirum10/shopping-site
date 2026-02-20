@@ -1,36 +1,40 @@
-// このウィンドウの商品番号
-
-// メッセージを受け取った時
+// メッセージを受け取った時（親ウィンドウから商品情報を受信）
 window.addEventListener('message', (event) => {
-  console.log(event.data)
-  // 商品情報取得
-  let item = event.data.item
+    const item = event.data.item
 
-  // itemが存在しない場合
-  if (item == undefined) {
-    // スクリプトでオープンしたものしかクローズできない
-    window.close()
-    // 直接URLにジャンプしてきた時は一覧に遷移
-    location.href = './'
-  }
+    // itemが存在しない場合は一覧に戻る
+    if (item == undefined) {
+        window.close()
+        location.href = './'
+    }
 
-  let output = document.getElementById('product-detail')
-  let outhtml =
-    `
-<img class="product-image" src="../img/${item.img}" alt="商品名">
+    const output = document.getElementById('product-detail')
+    output.innerHTML = `
+<img class="product-image" src="../img/${item.img}" alt="${item.name}">
 <h2 class="product-name">${item.name}</h2>
 <p class="product-price">¥${item.price}</p>
 <p id="detail">${item.detail}</p>
+
+<div class="quantity-selector">
+    <label for="quantity">数量：</label>
+    <button type="button" onclick="changeQty(-1)">－</button>
+    <span id="qty-display">1</span>
+    <button type="button" onclick="changeQty(1)">＋</button>
+</div>
+
 <button class="add-to-cart" onclick="cartIn(${event.data.index})">カートに追加</button>
 `
-  output.innerHTML += outhtml
 })
 
-// カートに入れる処理
+// 数量の増減
+let currentQty = 1
+function changeQty(delta) {
+    currentQty = Math.max(1, currentQty + delta)
+    document.getElementById('qty-display').textContent = currentQty
+}
+
+// カートに入れる処理（数量付き）
 function cartIn(index) {
-  console.log(window.opener)
-  // 親ウィンドウのcartIn関数を実行する。
-  window.opener.cartIn(index)
-  // ウィンドウを閉じる
-  window.close()
+    window.opener.cartIn(index, currentQty)
+    window.close()
 }

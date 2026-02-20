@@ -2,58 +2,90 @@ import Cart from "../js/Cart.js"
 
 const API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:5000'
 
-const output = document.getElementById('itemList')
+let cart
 
 if (window.sessionStorage.getItem('cartItems')) {
-  const cart = new Cart(JSON.parse(window.sessionStorage.getItem('cartItems')))
-
-  // カート内商品を画面に表示
-  cart.itemList.forEach(function (item) {
-    output.innerHTML += `
-  <div class="item-card">
-    <h2>${item.name}</h2>
-    <p>¥${item.price}</p>
-  </div>
-`
-  })
-
-  // 合計金額を表示
-  const total = cart.itemList.reduce((sum, item) => sum + item.price, 0)
-  output.innerHTML += `<div class="total"><strong>合計：¥${total}</strong></div>`
-
-  // 購入ボタンにAPIを使った注文処理をバインド
-  const completeBtn = document.getElementById('complete')
-  if (completeBtn) {
-    completeBtn.addEventListener('click', async function () {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/orders`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: cart.itemList })
-        })
-
-        if (!res.ok) throw new Error('注文の送信に失敗しました')
-
-        const result = await res.json()
-        console.log('注文完了:', result)
-
-        // 注文成功 → sessionStorageを削除して完了画面へ
-        window.sessionStorage.removeItem('cartItems')
-        location.href = './complete.html'
-
-      } catch (err) {
-        console.error(err)
-        alert('注文に失敗しました。もう一度お試しください。')
-      }
-    })
-  }
-
+    cart = new Cart(JSON.parse(window.sessionStorage.getItem('cartItems')))
 } else {
-  // カートが空の場合
-  output.innerHTML += `
-  <div class="item-card">
-    <p>カートの中は空っぽです。</p>
-  </div>
+    cart = new Cart()
+}
+
+// カート画面を描画
+function renderCart() {
+    const output = document.getElementById('itemList')
+    output.innerHTML = ''
+
+    if (cart.itemList.length === 0) {
+        output.innerHTML = `
+    <div class="item-card">
+        <p>カートの中は空っぽです。</p>
+    </div>`
+        document.getElementById('complete')?.remove()
+        return
+    }
+
+    cart.itemList.forEach(function (item) {
+        const card = document.createElement('div')
+        card.className = 'item-card'
+        card.innerHTML = `
+    <div class="cart-item">
+        <div class="cart-item-info">
+            <h2>${item.name}</h2>
+            <p>¥${item.price} × ${item.quantity}個 ＝ <strong>¥${item.price * item.quantity}</strong></p>
+        </div>
+        <button class="delete-btn" data-id="${item.id}">削除</button>
+    </div>
 `
-  document.getElementById('complete')?.remove()
+        output.appendChild(card)
+    })
+
+    // 合計金額
+    output.innerHTML += `
+    <div class="total-price">
+        <strong>合計金額：¥${cart.totalPrice}</strong>
+    </div>`
+
+    // 削除ボタンにイベントをバインド
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            cart.removeItem(Number(this.dataset.id))
+            // セッションに反映
+            window.sessionStorage.setItem('cartItems', JSON.stringify(cart.itemList))
+            renderCart()
+        })
+    })
+}
+
+// 初回描画
+renderCart()
+
+// 購入ボタン
+const completeBtn = document.getElementById('complete')
+if (completeBtn) {
+    completeBtn.addEventListener('click', async function () {
+        if (cart.itemList.length === 0) {
+            alert('カートが空です')
+            return
+        }
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: cart.itemList })
+            })
+
+            if (!res.ok) throw new Error('注文の送信に失敗しました')
+
+            const result = await res.json()
+            console.log('注文完了:', result)
+
+            window.sessionStorage.removeItem('cartItems')
+            location.href = './complete.html'
+
+        } catch (err) {
+            console.error(err)
+            alert('注文に失敗しました。もう一度お試しください。')
+        }
+    })
 }
