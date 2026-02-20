@@ -1,16 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>購入確認</title>
-    <link rel="stylesheet" href="../css/confirm.css">
-</head>
+    <title>購入確認 — CHOCOLAT</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        body { background: var(--cream); }
+
+        main {
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-bottom: 40px;
+        }
+
+        /* ===== CART ITEMS ===== */
+        #itemList {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .cart-item {
+            background: var(--warm-white);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            animation: fadeUp 0.3s ease forwards;
+        }
+
+        .cart-item-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-info .item-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .cart-item-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .item-subtotal {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--choco-mid);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .delete-btn {
+            background: none;
+            border: 1px solid rgba(192,83,58,0.3);
+            color: rgba(192,83,58,0.6);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: rgba(192,83,58,0.08);
+            color: #c0533a;
+            border-color: #c0533a;
+        }
+
+        /* ===== EMPTY ===== */
+        .empty-cart {
+            background: var(--warm-white);
+            padding: 60px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            line-height: 2;
+        }
+
+        .empty-cart .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+
+        /* ===== TOTAL ===== */
+        .order-summary {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .summary-row.total {
+            border-top: 1px solid var(--border);
+            margin-top: 8px;
+            padding-top: 16px;
+            font-size: 1.1rem;
+            color: var(--choco-dark);
+            font-weight: 500;
+        }
+
+        .summary-row.total span:last-child {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--choco-mid);
+        }
+
+        /* ===== ACTIONS ===== */
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #complete {
+            width: 100%;
+            padding: 16px;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+        }
+
+        .back-link-wrap {
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            main { padding: 36px 16px 60px; }
+            .cart-item { padding: 16px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="item-grid" id="itemList"></div>
-    <a href="complete.html" id="complete">購入</a>
-    <a href="./">戻る</a>
-    <script type="module" src="../js/confirm.js"></script>
+
+<header class="site-header">
+    <a class="logo" href="./index.html">Cho<em>co</em>lat</a>
+    <nav class="header-nav">
+        <a href="./index.html">← 商品一覧</a>
+    </nav>
+</header>
+
+<main>
+    <h1 class="page-title">カートの確認</h1>
+    <p class="page-subtitle">ご注文内容をご確認ください</p>
+
+    <div id="itemList"></div>
+
+    <div class="order-summary" id="summary" style="display:none;">
+        <div class="summary-row">
+            <span>商品数</span>
+            <span id="itemCount">—</span>
+        </div>
+        <div class="summary-row total">
+            <span>合計金額</span>
+            <span id="totalPrice">—</span>
+        </div>
+    </div>
+
+    <div class="action-area">
+        <button class="btn-primary" id="complete">ご注文を確定する</button>
+        <div class="back-link-wrap">
+            <a href="./index.html" class="btn-ghost">買い物を続ける</a>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <span>© 2025 CHOCOLAT</span>
+    <span>安全なお買い物をお約束します</span>
+</footer>
+
+<script type="module" src="../js/confirm.js"></script>
 </body>
 </html>

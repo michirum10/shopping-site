@@ -3,425 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MARCHÉ — 新鮮市場</title>
+    <title>CHOCOLAT — 商品一覧</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --cream: #f9f5ef;
-            --dark: #1a1a18;
-            --olive: #5c6b3a;
-            --rust: #c0533a;
-            --warm: #e8ddd0;
-            --text-muted: #888880;
-            --card-bg: #ffffff;
+            --choco-dark:  #1e1008;
+            --choco-brown: #3d1f0a;
+            --choco-mid:   #6b3a1f;
+            --choco-gold:  #c9a84c;
+            --cream:       #fdf6ee;
+            --warm-white:  #fff9f2;
+            --img-bg:      #f5ede3;
+            --border-col:  rgba(201,168,76,0.25);
         }
+        body { font-family: 'Noto Sans JP', sans-serif; background: var(--cream); color: var(--choco-dark); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: var(--cream);
-            color: var(--dark);
-            min-height: 100vh;
+        /* HEADER */
+        .site-header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--choco-dark);
+            border-bottom: 1px solid var(--border-col);
+            padding: 0 40px; height: 68px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-
-        /* ===== HEADER ===== */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--cream);
-            border-bottom: 1px solid var(--warm);
-            padding: 0 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 72px;
-        }
-
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            letter-spacing: 0.15em;
-            color: var(--dark);
-            text-decoration: none;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem; font-weight: 300;
+            letter-spacing: 0.3em; color: var(--cream);
+            text-decoration: none; text-transform: uppercase;
         }
-
-        .logo span {
-            color: var(--rust);
-            font-style: italic;
+        .logo em { color: var(--choco-gold); font-style: italic; }
+        .header-nav { display: flex; align-items: center; gap: 24px; }
+        .header-nav a {
+            text-decoration: none; font-size: 0.75rem;
+            letter-spacing: 0.15em; color: rgba(253,246,238,0.6);
+            text-transform: uppercase; transition: color 0.2s;
         }
-
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 32px;
+        .header-nav a:hover { color: var(--cream); }
+        .cart-link {
+            display: flex !important; align-items: center; gap: 8px;
+            background: var(--choco-gold) !important;
+            color: var(--choco-dark) !important;
+            padding: 8px 18px !important; border-radius: 100px;
+            font-weight: 500 !important;
         }
-
-        nav a {
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            transition: color 0.2s;
-        }
-
-        nav a:hover { color: var(--dark); }
-
-        .cart-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--dark);
-            color: var(--cream) !important;
-            padding: 10px 20px;
-            border-radius: 100px;
-            font-size: 0.78rem !important;
-            transition: background 0.2s !important;
-        }
-
-        .cart-btn:hover { background: var(--olive) !important; color: var(--cream) !important; }
-
         .cart-count {
-            background: var(--rust);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
-            font-weight: 700;
+            background: var(--choco-dark); color: var(--choco-gold);
+            border-radius: 50%; width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 700;
         }
 
-        /* ===== HERO ===== */
+        /* HERO */
         .hero {
-            padding: 80px 40px 60px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--warm);
-            position: relative;
-            overflow: hidden;
+            background: var(--choco-dark); color: var(--cream);
+            padding: 72px 40px 64px; position: relative; overflow: hidden;
         }
-
         .hero::before {
-            content: 'FRESH';
-            position: absolute;
-            right: -20px;
-            top: 10px;
-            font-family: 'Playfair Display', serif;
-            font-size: 9rem;
-            color: var(--warm);
-            letter-spacing: -0.05em;
-            pointer-events: none;
-            line-height: 1;
+            content: 'CHOCOLAT'; position: absolute;
+            bottom: -20px; right: -10px;
+            font-family: 'Cormorant Garamond', serif; font-size: 7rem;
+            color: rgba(201,168,76,0.06); pointer-events: none;
+            line-height: 1; white-space: nowrap;
         }
-
-        .hero-text h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.2rem;
-            font-weight: 700;
-            line-height: 1.15;
-            max-width: 480px;
+        .hero-eyebrow {
+            font-size: 0.68rem; letter-spacing: 0.3em;
+            text-transform: uppercase; color: var(--choco-gold); margin-bottom: 16px;
         }
-
-        .hero-text h1 em {
-            font-style: italic;
-            color: var(--olive);
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.2rem; font-weight: 300; line-height: 1.25; margin-bottom: 14px;
         }
+        .hero h1 em { font-style: italic; color: var(--choco-gold); }
+        .hero p { font-size: 0.87rem; color: rgba(253,246,238,0.55); line-height: 1.9; font-weight: 300; }
 
-        .hero-text p {
-            margin-top: 16px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 300;
-            letter-spacing: 0.04em;
-            line-height: 1.7;
-        }
-
-        .hero-badge {
-            background: var(--olive);
-            color: white;
-            padding: 24px;
-            border-radius: 50%;
-            width: 110px;
-            height: 110px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            flex-shrink: 0;
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            line-height: 1.5;
-        }
-
-        .hero-badge strong {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            display: block;
-        }
-
-        /* ===== SECTION ===== */
+        /* SECTION HEADER */
         .section-header {
-            padding: 48px 40px 24px;
-            display: flex;
-            align-items: baseline;
-            gap: 16px;
+            padding: 36px 40px 20px;
+            display: flex; align-items: baseline; justify-content: space-between;
+            border-bottom: 1px solid var(--border-col);
         }
+        .section-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; }
+        .section-header span { font-size: 0.72rem; color: #9a7a65; letter-spacing: 0.1em; }
 
-        .section-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
-        }
+        /* PRODUCT GRID */
+        #itemList { padding: 28px 32px 80px; }
 
-        .section-header span {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        /* ===== PRODUCT GRID ===== */
-        #itemList {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 2px;
-            padding: 0 40px 80px;
-        }
-
-        .item-card {
-            background: var(--card-bg);
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-radius: 4px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.5s ease forwards;
-        }
-
-        .item-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-
-        .item-card:hover .card-overlay {
-            opacity: 1;
-        }
-
-        .card-img-wrap {
-            aspect-ratio: 1;
-            background: var(--warm);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-img-wrap img {
-            width: 100%;
+        /* CARD */
+        .product-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border-col) !important;
+            border-radius: 10px !important;
+            overflow: hidden; cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+            opacity: 0; animation: fadeUp 0.5s ease forwards;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 36px rgba(30,16,8,0.13) !important;
         }
 
-        .item-card:hover .card-img-wrap img {
-            transform: scale(1.06);
+        /* 画像：固定高さ＋object-fit:contain で全商品統一 */
+        .product-img-wrap {
+            width: 100%; height: 200px;
+            background: var(--img-bg);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .product-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: contain;   /* 縦横比を保ちつつ枠に収める */
+            padding: 20px;         /* 画像まわりに余白を設けて統一感を出す */
+        }
+        .product-img-wrap .fallback-emoji {
+            font-size: 4rem; display: none;
         }
 
-        /* 画像がない場合のプレースホルダー */
-        .card-img-placeholder {
-            font-size: 3.5rem;
-            color: var(--text-muted);
+        .card-body-custom { padding: 18px 20px 20px; }
+        .card-category {
+            font-size: 0.62rem; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--choco-gold); margin-bottom: 6px;
+        }
+        .card-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem; font-weight: 400; color: var(--choco-dark); margin-bottom: 8px;
+        }
+        .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+        .card-price { font-size: 1rem; font-weight: 500; color: var(--choco-mid); }
+        .card-arrow { font-size: 0.65rem; letter-spacing: 0.1em; color: #9a7a65; transition: color 0.2s; }
+        .product-card:hover .card-arrow { color: var(--choco-gold); }
+
+        /* LOADING */
+        .loading-wrap {
+            text-align: center; padding: 80px; color: #9a7a65;
+            font-size: 0.85rem; letter-spacing: 0.1em;
+        }
+        .spinner-choco {
+            width: 36px; height: 36px;
+            border: 2px solid var(--border-col);
+            border-top-color: var(--choco-gold);
+            border-radius: 50%; animation: spin 0.9s linear infinite;
+            margin: 0 auto 16px;
         }
 
-        .card-body {
-            padding: 18px 20px 20px;
+        /* TOAST */
+        .toast-custom {
+            position: fixed; bottom: 32px; left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            background: var(--choco-dark); color: var(--choco-gold);
+            border: 1px solid var(--border-col);
+            padding: 12px 28px; border-radius: 100px;
+            font-size: 0.8rem; z-index: 9999; opacity: 0;
+            transition: all 0.3s; white-space: nowrap; pointer-events: none;
         }
+        .toast-custom.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .card-tag {
-            font-size: 0.68rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--olive);
-            font-weight: 500;
-            margin-bottom: 6px;
+        /* FOOTER */
+        .site-footer {
+            background: var(--choco-dark); color: rgba(253,246,238,0.4);
+            padding: 28px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.72rem; letter-spacing: 0.1em;
         }
+        .site-footer a { color: var(--choco-gold); text-decoration: none; }
 
-        .card-body h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            font-weight: 400;
-            margin-bottom: 8px;
-        }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes spin   { to { transform: rotate(360deg); } }
 
-        .card-body .price {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--rust);
-            letter-spacing: 0.02em;
-        }
-
-        .card-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(26,26,24,0.04);
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            padding: 16px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .view-label {
-            background: var(--dark);
-            color: var(--cream);
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 8px 16px;
-            border-radius: 100px;
-        }
-
-        /* ===== LOADING ===== */
-        .loading {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 80px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
-        }
-
-        .loading::after {
-            content: '';
-            display: block;
-            width: 32px;
-            height: 32px;
-            border: 2px solid var(--warm);
-            border-top-color: var(--olive);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 16px auto 0;
-        }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--dark);
-            color: var(--cream);
-            padding: 14px 28px;
-            border-radius: 100px;
-            font-size: 0.82rem;
-            letter-spacing: 0.04em;
-            z-index: 9999;
-            opacity: 0;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            border-top: 1px solid var(--warm);
-            padding: 32px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            header { padding: 0 20px; }
-            .hero { padding: 48px 20px 40px; flex-direction: column; gap: 32px; }
-            .hero::before { font-size: 5rem; }
-            .hero-text h1 { font-size: 2.2rem; }
-            #itemList { padding: 0 20px 60px; grid-template-columns: repeat(2, 1fr); }
-            .section-header { padding: 32px 20px 16px; }
-            footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+        @media (max-width: 576px) {
+            .site-header { padding: 0 16px; }
+            .hero { padding: 48px 20px 52px; }
+            .hero h1 { font-size: 2.1rem; }
+            .section-header { padding: 24px 16px 14px; }
+            #itemList { padding: 16px 12px 60px; }
+            .site-footer { padding: 20px 16px; flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <a class="logo" href="#">MAR<span>CHÉ</span></a>
-        <nav>
-            <a href="./orders.html">注文履歴</a>
-            <a href="./confirm.html" class="cart-btn">
-                🛒 カートを見る
-                <span class="cart-count" id="cartCount">0</span>
-            </a>
-        </nav>
-    </header>
+<header class="site-header">
+    <a class="logo" href="#">Cho<em>co</em>lat</a>
+    <nav class="header-nav">
+        <a href="./orders.html">注文履歴</a>
+        <a href="./confirm.html" class="cart-link">
+            🛒 カート <span class="cart-count" id="cartCount">0</span>
+        </a>
+    </nav>
+</header>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1>新鮮な食材を、<br><em>毎日の食卓</em>へ。</h1>
-            <p>厳選された旬の食材を<br>いつでも手軽にお届けします。</p>
-        </div>
-        <div class="hero-badge">
-            <strong>新鮮</strong>
-            毎日<br>入荷
-        </div>
-    </section>
+<section class="hero">
+    <p class="hero-eyebrow">Artisan Chocolate Shop</p>
+    <h1>丁寧に作られた<br><em>上質なチョコレート</em>を。</h1>
+    <p>厳選されたカカオから生まれる、特別なひとときをお届けします。</p>
+</section>
 
-    <div class="section-header">
-        <h2>商品一覧</h2>
-        <span id="productCount">読み込み中...</span>
+<div class="section-header">
+    <h2>商品一覧</h2>
+    <span id="productCount"></span>
+</div>
+
+<div id="itemList">
+    <div class="loading-wrap">
+        <div class="spinner-choco"></div>
+        読み込み中...
     </div>
+</div>
 
-    <div id="itemList">
-        <div class="loading">読み込み中</div>
-    </div>
+<footer class="site-footer">
+    <span>© 2025 CHOCOLAT</span>
+    <a href="./orders.html">注文履歴を見る</a>
+</footer>
 
-    <footer>
-        <span>© 2025 MARCHÉ</span>
-        <span>新鮮市場 — フレッシュデリバリー</span>
-    </footer>
+<div class="toast-custom" id="toast"></div>
 
-    <div class="toast" id="toast"></div>
-
-    <script type="module" src="../js/index.js"></script>
-    <script>
-        // カート件数をヘッダーに反映
-        function updateCartCount() {
-            const items = JSON.parse(sessionStorage.getItem('cartItems') || '[]')
-            const total = items.reduce((sum, i) => sum + (i.quantity || 1), 0)
-            document.getElementById('cartCount').textContent = total
-        }
-        updateCartCount()
-    </script>
+<script>
+    function updateCartCount() {
+        const items = JSON.parse(sessionStorage.getItem('cartItems') || '[]')
+        const total = items.reduce((s, i) => s + (i.quantity || 1), 0)
+        document.getElementById('cartCount').textContent = total
+    }
+    updateCartCount()
+</script>
+<script type="module" src="../js/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

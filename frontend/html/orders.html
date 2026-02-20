@@ -3,19 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文履歴</title>
-    <link rel="stylesheet" href="../css/orders.css">
+    <title>注文履歴 — CHOCOLAT</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        body { background: var(--cream); }
+
+        main {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-bottom: 40px;
+        }
+
+        /* ===== ORDER CARD ===== */
+        .order-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            animation: fadeUp 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .order-head {
+            background: var(--choco-dark);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .order-id {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--cream);
+            letter-spacing: 0.05em;
+        }
+
+        .order-date {
+            font-size: 0.7rem;
+            color: rgba(253,246,238,0.45);
+            letter-spacing: 0.08em;
+        }
+
+        .order-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .order-items li {
+            padding: 14px 24px;
+            font-size: 0.85rem;
+            color: var(--choco-dark);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .order-items li:last-child { border-bottom: none; }
+
+        .item-qty { color: var(--text-muted); font-size: 0.78rem; }
+
+        .order-foot {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--cream);
+        }
+
+        .order-foot .label {
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .order-total {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            color: var(--choco-mid);
+        }
+
+        /* ===== EMPTY ===== */
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .icon { font-size: 2.5rem; display: block; margin-bottom: 16px; }
+        .empty-state p { font-size: 0.85rem; line-height: 2; }
+
+        /* ===== LOADING ===== */
+        .loading-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 640px) {
+            main { padding: 36px 16px 60px; }
+            .order-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>注文履歴</h1>
-        <a href="./index.html" class="back-link">← 商品一覧に戻る</a>
-    </header>
 
-    <main>
-        <div id="orderList"></div>
-    </main>
+<header class="site-header">
+    <a class="logo" href="./index.html">Cho<em>co</em>lat</a>
+    <nav class="header-nav">
+        <a href="./index.html">← 商品一覧</a>
+        <a href="./confirm.html" class="cart-link">
+            🛒 カート
+            <span class="cart-count" id="cartCount">0</span>
+        </a>
+    </nav>
+</header>
 
-    <script type="module" src="../js/orders.js"></script>
+<main>
+    <h1 class="page-title">注文履歴</h1>
+    <p class="page-subtitle">過去のご注文内容を確認できます</p>
+    <div id="orderList"><div class="loading-state">読み込み中...</div></div>
+</main>
+
+<footer class="site-footer">
+    <span>© 2025 CHOCOLAT</span>
+    <a href="./index.html">商品一覧へ</a>
+</footer>
+
+<script>
+    function updateCartCount() {
+        const items = JSON.parse(sessionStorage.getItem('cartItems') || '[]')
+        const total = items.reduce((s, i) => s + (i.quantity || 1), 0)
+        document.getElementById('cartCount').textContent = total
+    }
+    updateCartCount()
+</script>
+<script type="module" src="../js/orders.js"></script>
 </body>
 </html>
