@@ -38,8 +38,8 @@ SQLite DB
 ### 1. リポジトリをクローン
 
 ```bash
-git clone https://github.com/michirum10/portfolio.git
-cd portfolio/Python/ShoppingSite
+git clone https://github.com/michirum10/shopping-site.git
+cd shopping-site/backend
 ```
 
 ### 2. 仮想環境を作成・有効化
